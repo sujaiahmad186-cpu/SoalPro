@@ -16,7 +16,7 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230b1329'/><path d='M30 35 C30 25, 45 20, 50 20 C55 20, 70 25, 70 35 C45 50, 30 45, 30 35 Z M50 50 L50 80 M35 65 L65 65' stroke='%233b82f6' stroke-width='6' fill='none' stroke-linecap='round'/><circle cx='50' cy='32' r='6' fill='%2360a5fa'/></svg>">
 
     <!-- Inline Web App Manifest for Desktop/PWA Installation -->
-    <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIkFJIFNvYWxQcm8gLSBHRU5FUkFUT1IgU09BTCBGNCAiLAogICJzaG9ydF9uYW1lIjogIkFJIFNvYWxQcm8iLAogICJzdGFydF91cmwiLCAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBiMTMyOSIsCiAgInRoZW1lX2NvbG9yIjogIiMwYjEzMjkiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUJDVkZNaUkyTmhkR2wwWlhNdU1UQXdNQ0FnVm1sbGRDOTFNU0I0T0NBNE1DQjROQ0E0TGlBb0pISnVZMzB1TURBZ01DQThjM1puSUdoc1pYSjBJa1JvZEhkpGN5OWhkM2Mub2RnM0x6RTBMemN2TXpVME1qazRNaTloY0drdkptSjBjeUIwWVdkb2N5NW1iM0p0WVhRdUl6NE5DZz09IiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkgbWFza2FibGUiCiAgICB9CiAgXQp9">
+    <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIkFJIFNvYWxQcm8gLSBHRU5FUkFUT1IgU09BTCBGNCAiLAogICJzaG9ydF9uYW1lIjogIkFJIFNvYWxQcm8iLAogICJzdGFydF91cmwiLCAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBiMTMyOSIsCiAgInRoZW1lX2NvbG9yIjogIiMwYjEzMjkiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUJDVkZNaUkyTmhkR2wwWlhNdU1UQXdNQ0FnVm1sbGRDOTFNU0I0T0NBNE1DQjROQ0E0TGlBb0pISnVZMzB1TURBZ01DQThjM1puSUdoc1pYSjBJa1JvZEhkpGN5OWhkM2Mub2RnM0x6RTBMomN2TXpVME1qazRNaTloY0drdkptSjBjeUIwWVdkb2N5NW1iM0p0WVhRdUl6NE5DZz09IiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkgbWFza2FibGUiCiAgICB9CiAgXQp9">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -182,9 +182,14 @@
                 margin: 0mm 25mm 12mm 25mm; /* Standard Print Margin */
             }
             .kop-border img {
-                width: 100px !important;
-                height: 80px !important;
+                width: 200px !important;
+                height: 100px !important;
                 object-fit: contain !important;
+            }
+
+            /* Sembunyikan Logo Kanan saat mencetak */
+            .kop-logo-right {
+                display: none !important;
             }
 
             html, body {
@@ -290,7 +295,7 @@
                     <i data-lucide="check-square" class="w-4 h-4"></i> Kunci & Pembahasan
                 </button>
                 <button onclick="switchView('bank')" id="nav-bank" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all">
-                    <i data-lucide="database" class="w-4 h-4"></i> Bank Soal 
+                    <i data-lucide="database" class="w-4 h-4"></i> Bank Soal (30 PG)
                 </button>
                 
                 <!-- MENU AKSI API KEY GEMINI -->
@@ -531,17 +536,7 @@
                                                 </div>
                                             </div>
 
-                                            <!-- LOGO KANAN UPLOAD -->
-                                            <div class="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-200">
-                                                <div class="flex-shrink-0">
-                                                    <img id="imgLogoRightPreview" src="" alt="Logo Kanan" class="logo-preview-box">
-                                                </div>
-                                                <div class="space-y-1.5 flex-1 min-w-0">
-                                                    <span class="font-semibold text-slate-800 block text-[11px]">Logo Kanan (Sekolah/Madrasah)</span>
-                                                    <input type="file" id="inputLogoRight" accept="image/*" onchange="handleLogoUpload(event, 'right')" class="block w-full text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-[10px] file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
-                                                    <button onclick="resetLogo('right')" class="text-[10px] text-red-600 hover:underline font-medium">Reset Ke Vector Default</button>
-                                                </div>
-                                            </div>
+                                            
                                         </div>
                                     </div>
 
@@ -1351,7 +1346,7 @@ Kembalikan format JSON persis sesuai schema berikut tanpa markdown lain:
 
             const getKopHtml = () => `
                 <div class="relative flex items-center justify-between pb-1.5 kop-border min-h-[85px] font-serif">
-                    <div class="w-16 md:w-20 flex flex-col items-center justify-center flex-shrink-0">
+                    <div class="w-20 md:w-20 flex flex-col items-center justify-center flex-shrink-0">
                         <img src="${uploadedLogoLeft}" alt="Logo Kiri" class="w-28 h-28 md:w-25 md:h-25 object-contain">
                     </div>
                 
@@ -1360,10 +1355,6 @@ Kembalikan format JSON persis sesuai schema berikut tanpa markdown lain:
                         <h2 style="font-family: Arial, sans-serif;" class="font-bold text-sm text-[11pt] md:text-base uppercase tracking-wide leading-tight text-slate-900" contenteditable="true">${sekolah}</h2>
                         <p class="text-[10pt] italic font-normal leading-tight" contenteditable="true">${alamat1}</p>
                         <p class="text-[9pt] font-normal leading-tight" contenteditable="true">${alamat2}</p>
-                    </div>
-
-                    <div class="w-16 md:w-20 flex flex-col items-center justify-center flex-shrink-0">
-                        <img src="${uploadedLogoRight}" alt="Logo Kanan" class="w-28 h-28 md:w-25 md:h-25 object-contain">
                     </div>
                 </div>
 
@@ -1380,7 +1371,7 @@ Kembalikan format JSON persis sesuai schema berikut tanpa markdown lain:
                         <td class="border-b border-black" contenteditable="true">:            </td>
                     </tr>
                     <tr>
-                        <td class="font-bold border-r border-black bg-slate-50">Kelas</td>
+                        <td class="font-bold border-r border-black bg-slate-50">Kelas / Semester</td>
                         <td class="border-r border-black" contenteditable="true">: ${kelas}</td>
                         <td class="font-bold border-r border-black bg-slate-50">Hari / Tanggal</td>
                         <td contenteditable="true">: ${hariTgl} (${waktu})</td>
