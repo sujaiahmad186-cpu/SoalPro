@@ -15,9 +15,6 @@
     <!-- Dynamic Favicon SVG -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230b1329'/><path d='M30 35 C30 25, 45 20, 50 20 C55 20, 70 25, 70 35 C45 50, 30 45, 30 35 Z M50 50 L50 80 M35 65 L65 65' stroke='%233b82f6' stroke-width='6' fill='none' stroke-linecap='round'/><circle cx='50' cy='32' r='6' fill='%2360a5fa'/></svg>">
 
-    <!-- Inline Web App Manifest for Desktop/PWA Installation -->
-    <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIkFJIFNvYWxQcm8gLSBHRU5FUkFUT1IgU09BTCBGNCAiLAogICJzaG9ydF9uYW1lIjogIkFJIFNvYWxQcm8iLAogICJzdGFydF91cmwiLCAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBiMTMyOSIsCiAgInRoZW1lX2NvbG9yIjogIiMwYjEzMjkiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUJDVkZNaUkyTmhkR2wwWlhNdU1UQXdNQ0FnVm1sbGRDOTFNU0I0T0NBNE1DQjROQ0E0TGlBb0pISnVZMzB1TURBZ01DQThjM1puSUdoc1pYSjBJa1JvZEhkpGN5OWhkM2Mub2RnM0x6RTBMomN2TXpVME1qazRNaTloY0drdkptSjBjeUIwWVdkb2N5NW1iM0p0WVhRdUl6NE5DZz09IiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkgbWFza2FibGUiCiAgICB9CiAgXQp9">
-
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter for UI, Tinos for Exam Paper -->
@@ -52,6 +49,11 @@
     </script>
 
     <style>
+        :root {
+            --custom-font-size: 14pt;
+            --custom-font: 'Arial Narrow', Arial, sans-serif;
+        }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
@@ -65,22 +67,26 @@
             border-radius: 4px;
         }
 
-        /* Standard F4 Paper Dimensions & Typography for Exam Sheet */
+        /* Standar Container Lembar Soal (Hanya isi soal yang terpengaruh variabel ukuran font) */
         .exam-paper {
-            font-family: 'Tinos', 'Times New Roman', Times, serif;
+            font-family: var(--custom-font);
             color: #000000;
             background-color: transparent;
             line-height: 1.5;
-            font-size: 12pt;
+        }
+
+        /* Kelas khusus untuk bagian soal & pilihan agar ukuran font dinamis mengikuti dropdown */
+        .dynamic-question-text {
+            font-size: var(--custom-font-size) !important;
         }
 
         /* Standard Indonesian F4 Page Sheet: 215mm x 330mm */
         .f4-page {
-            width: 215mm;
-            min-height: 330mm;
+            width: 216mm;
+            min-height: 365mm;
             padding-top: 12mm;
             padding-bottom: 12mm;
-            padding-left: 18mm;  /* Left margin for stapling/binder */
+            padding-left: 18mm;
             padding-right: 15mm;
             margin: 0 auto 2rem auto;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
@@ -91,7 +97,6 @@
             border: 1px solid #e2e8f0;
         }
 
-        /* Prevent question block splitting awkwardly across pages */
         .q-block {
             page-break-inside: avoid !important;
             break-inside: avoid !important;
@@ -111,21 +116,10 @@
             gap: 2px 8px;
             padding-left: 1.5rem;
             margin-top: 0.15rem;
-            font-size: 10pt;
+            font-size: var(--custom-font-size);
         }
 
-        .options-grid.two-cols {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            grid-template-rows: repeat(2, auto);
-            grid-auto-flow: column;
-        }
-
-        .options-grid.one-col {
-            grid-template-columns: 1fr;
-            grid-auto-flow: row;
-        }
-
-        /* Line density controls for optimal fitting on F4 sheets */
+        /* Line density controls */
         .density-compact .q-block { margin-bottom: 0.25rem; line-height: 1.18; }
         .density-compact .opt-item { padding-top: 0px; padding-bottom: 0px; }
         .density-compact .options-grid { gap: 1px 6px; }
@@ -149,20 +143,23 @@
             margin-top: 0px;
         }
 
-        /* Printable Identity Table Styling */
         .table-identitas td {
             padding: 2px 5px;
             vertical-align: middle;
         }
 
-        /* Printable Editable Focus Highlighting */
+        .table-kisi th, .table-kisi td {
+            border: 1px solid #000;
+            padding: 6px 8px;
+            vertical-align: top;
+        }
+
         [contenteditable="true"]:focus {
             outline: 1.5px dashed #2563eb;
             background-color: #f0f7ff;
             border-radius: 2px;
         }
 
-        /* Logo Preview Box in Kop Settings */
         .logo-preview-box {
             width: 100px;
             height: 100px;
@@ -173,33 +170,26 @@
             background-color: #f8fafc;
         }
 
-        /* ==========================================
-           STRICT PRINT MEDIA STYLING FOR F4 PAPER
-           ========================================== */
-        @media print {
+        /* PRINT MEDIA STYLING FOR F4 PAPER */
+       @media print {
             @page {
-                size: 215mm 330mm; /* Standard Folio / F4 Dimensions */
-                margin: 0mm 25mm 12mm 25mm; /* Standard Print Margin */
+                size: 215.9mm 355.6mm;
+                margin: 12mm 15mm 30mm 18mm;
             }
+            
             .kop-border img {
-                width: 200px !important;
-                height: 100px !important;
+                width: 90px !important;
+                height: 90px !important;
                 object-fit: contain !important;
             }
 
-            /* Sembunyikan Logo Kanan saat mencetak */
-            .kop-logo-right {
-                display: none !important;
-            }
-
-            html, body {
+           html, body {
                 width: 100% !important;
                 height: auto !important;
                 background: #ffffff !important;
                 padding: 0 !important;
                 margin: 0 !important;
-                font-family: 'Tinos', 'Times New Roman', serif !important;
-                font-size: 12pt !important;
+                font-family: var(--custom-font) !important;
                 color: #000000 !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
@@ -218,7 +208,11 @@
                 overflow: visible !important;
             }
 
-            #view-generator, #view-bank, #apiKeyModal, #pwa-install-banner {
+            #view-generator, #view-bank, #apiKeyModal {
+                display: none !important;
+            }
+
+            .hidden {
                 display: none !important;
             }
 
@@ -253,7 +247,7 @@
                 padding-left: 1.2rem !important;
             }
 
-            .kop-border, .table-identitas {
+            .kop-border, .table-identitas, .table-kisi {
                 page-break-inside: avoid !important;
             }
 
@@ -270,7 +264,6 @@
 
         <!-- LEFT SIDEBAR -->
         <aside class="no-print w-64 bg-brand-sidebar text-white flex flex-col flex-shrink-0 z-30 transition-all duration-300 hidden md:flex">
-            <!-- App Logo Header -->
             <div class="p-5 border-b border-slate-800/80 flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
@@ -278,7 +271,6 @@
                     </div>
                     <div>
                         <h1 class="font-extrabold text-sm tracking-wide text-white">AI SoalPro</h1>
-                        
                     </div>
                 </div>
             </div>
@@ -291,14 +283,16 @@
                 <button onclick="switchView('preview')" id="nav-preview" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all">
                     <i data-lucide="file-text" class="w-4 h-4"></i> Lembar Soal F4
                 </button>
+                <button onclick="switchView('kisi')" id="nav-kisi" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all">
+                    <i data-lucide="list-checks" class="w-4 h-4"></i> Kisi-Kisi Soal
+                </button>
                 <button onclick="switchView('kunci')" id="nav-kunci" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all">
                     <i data-lucide="check-square" class="w-4 h-4"></i> Kunci & Pembahasan
                 </button>
                 <button onclick="switchView('bank')" id="nav-bank" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all">
-                    <i data-lucide="database" class="w-4 h-4"></i> Bank Soal (30 PG)
+                    <i data-lucide="database" class="w-4 h-4"></i> Bank Soal (<span id="bankCountLabel">2</span>)
                 </button>
                 
-                <!-- MENU AKSI API KEY GEMINI -->
                 <div class="pt-2 mt-2 border-t border-slate-800/80">
                     <button onclick="openApiKeyModal()" id="nav-apikey" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-amber-300 hover:bg-slate-800/60 transition-all border border-amber-500/20 bg-amber-500/5">
                         <div class="flex items-center gap-3">
@@ -310,7 +304,6 @@
                 </div>
             </nav>
 
-            <!-- Format Specs Badge -->
             <div class="p-4 m-3 bg-slate-800/60 rounded-2xl border border-slate-700/50 space-y-2 text-xs">
                 <div class="flex items-center gap-2 text-blue-400 font-bold text-[11px]">
                     <i data-lucide="layers" class="w-3.5 h-3.5"></i> Spesifikasi Pengembang
@@ -319,10 +312,8 @@
                     <li class="flex justify-between"><span>Developer: </span> <strong class="text-white">Ahmad Suja’i, S. Kom</strong></li>
                     <li class="flex justify-between"><span>Platform:</span> <strong class="text-amber-300"> Web Application</strong></li>
                     <li class="flex justify-between"><span>Kategori:</span> <strong class="text-emerald-400"> Educational Technology</strong></li>
-                     <li class="flex justify-between"><span>Versi:</span> <strong class="text-emerald-400">  1.0.0</strong></li>
-                       <li class="flex justify-between"><span>Tahun</span> <strong class="text-emerald-400">  2026</strong></li>
-                       © 2026 Ahmad Suja’i – Inovasi Digital untuk Pendidikan.
-                     
+                    <li class="flex justify-between"><span>Versi:</span> <strong class="text-emerald-400"> 1.0.0</strong></li>
+                    <li class="flex justify-between"><span>Tahun</span> <strong class="text-emerald-400"> 2026</strong></li>
                 </ul>
             </div>
         </aside>
@@ -330,30 +321,19 @@
         <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
 
             <header class="no-print bg-white border-b border-slate-200 px-4 py-3 sticky top-0 z-20 flex items-center justify-between gap-4 shadow-sm">
-                <!-- Search & Quick Navigation -->
                 <div class="flex items-center gap-3 flex-1 max-w-xl">
                     <div class="relative w-full">
                         <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
                         <input type="text" placeholder="Cari soal, mata pelajaran, atau template..." class="w-full pl-9 pr-16 py-1.5 bg-slate-100 hover:bg-slate-100/80 focus:bg-white text-xs rounded-xl border border-transparent focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all focus:outline-none">
-                        <span class="absolute right-2.5 top-2 text-[10px] font-medium bg-white text-slate-400 border border-slate-200 px-1.5 py-0.5 rounded">Ctrl + K</span>
                     </div>
                 </div>
 
-                <!-- Top Right User & Actions -->
                 <div class="flex items-center gap-3">
-                    <!-- Action API Key Gemini Header Button -->
                     <button onclick="openApiKeyModal()" class="px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 transition-all border border-amber-200">
                         <i data-lucide="key" class="w-3.5 h-3.5 text-amber-600"></i>
                         <span class="hidden sm:inline">API Key Gemini</span>
                         <span id="headerApiKeyStatus" class="w-2 h-2 rounded-full bg-rose-500"></span>
                     </button>
-
-                    <button onclick="triggerPwaInstall()" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition-all md:hidden">
-                        <i data-lucide="laptop" class="w-3.5 h-3.5"></i>
-                        <span>Install App</span>
-                    </button>
-
-                 
                 </div>
             </header>
 
@@ -366,11 +346,10 @@
                         <div class="absolute -right-10 -bottom-10 w-72 h-72 bg-blue-500/30 rounded-full blur-3xl pointer-events-none"></div>
 
                         <div class="relative z-10 max-w-3xl space-y-3">
-                           
                             <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight leading-tight">
                                 Selamat Datang!
                             </h2>
-                             <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight leading-tight">
+                            <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight leading-tight">
                                 Buat Soal Ujian Lebih Mudah dan Cepat.
                             </h2>
                             <p class="text-slate-300 text-xs md:text-sm leading-relaxed">
@@ -382,7 +361,6 @@
                     <!-- FORM GENERATOR GRID -->
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-                        <!-- MAIN FORM CARD (8 Cols) -->
                         <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6">
                             <div class="flex items-center justify-between pb-4 border-b border-slate-100">
                                 <div class="flex items-center gap-2">
@@ -391,7 +369,7 @@
                                     </div>
                                     <div>
                                         <h3 class="font-bold text-slate-800 text-base">Buat Naskah Soal Baru</h3>
-                                        <p class="text-xs text-slate-500">Pilih tipe soal dan tentukan jumlah pilihan ganda hingga 30 soal</p>
+                                        <p class="text-xs text-slate-500">Pilih tipe soal dan tentukan kombinasi soal Anda</p>
                                     </div>
                                 </div>
                                 <button onclick="resetMateriInput()" class="text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">
@@ -407,9 +385,15 @@
                                     <label id="card-type-kombinasi" class="cursor-pointer border-2 border-blue-600 bg-blue-50/70 p-3 rounded-xl flex flex-col items-center justify-center gap-1 text-center text-xs font-bold text-blue-700 shadow-2xs transition-all">
                                         <div class="flex items-center gap-1.5">
                                             <input type="radio" name="tipeSoal" value="Kombinasi" checked onchange="handleTipeSoalChange()" class="text-blue-600 focus:ring-blue-500">
-                                            <span>Kombinasi</span>
+                                            <span>PG + Uraian</span>
                                         </div>
-                                        <span class="text-[10px] font-semibold text-blue-600/90">PG + Essai</span>
+                                    </label>
+
+                                    <label id="card-type-pg-isian" class="cursor-pointer border border-slate-200 hover:border-slate-300 p-3 rounded-xl flex flex-col items-center justify-center gap-1 text-center text-xs font-medium text-slate-600 transition-all">
+                                        <div class="flex items-center gap-1.5">
+                                            <input type="radio" name="tipeSoal" value="PG + Isian" onchange="handleTipeSoalChange()" class="text-blue-600 focus:ring-blue-500">
+                                            <span>PG + Isian</span>
+                                        </div>
                                     </label>
 
                                     <label id="card-type-pg" class="cursor-pointer border border-slate-200 hover:border-slate-300 p-3 rounded-xl flex flex-col items-center justify-center gap-1 text-center text-xs font-medium text-slate-600 transition-all">
@@ -417,15 +401,6 @@
                                             <input type="radio" name="tipeSoal" value="Pilihan Ganda" onchange="handleTipeSoalChange()" class="text-blue-600 focus:ring-blue-500">
                                             <span>Pilihan Ganda</span>
                                         </div>
-                                        
-                                    </label>
-
-                                    <label id="card-type-uraian" class="cursor-pointer border border-slate-200 hover:border-slate-300 p-3 rounded-xl flex flex-col items-center justify-center gap-1 text-center text-xs font-medium text-slate-600 transition-all">
-                                        <div class="flex items-center gap-1.5">
-                                            <input type="radio" name="tipeSoal" value="Uraian" onchange="handleTipeSoalChange()" class="text-blue-600 focus:ring-blue-500">
-                                            <span>Uraian / Essai</span>
-                                        </div>
-                                        
                                     </label>
 
                                     <label id="card-type-isian" class="cursor-pointer border border-slate-200 hover:border-slate-300 p-3 rounded-xl flex flex-col items-center justify-center gap-1 text-center text-xs font-medium text-slate-600 transition-all">
@@ -433,7 +408,6 @@
                                             <input type="radio" name="tipeSoal" value="Isian Singkat" onchange="handleTipeSoalChange()" class="text-blue-600 focus:ring-blue-500">
                                             <span>Isian Singkat</span>
                                         </div>
-                                       
                                     </label>
 
                                 </div>
@@ -442,26 +416,24 @@
                             <!-- Mapel & Kelas Selection -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Mata Pelajaran (Tulis Manual)</label>
-                                    <input type="text" id="cfgMapel" value="Informatika" oninput="syncHeaderControls()" placeholder="Ketik nama mata pelajaran..." class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2.5 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none font-semibold text-slate-800 transition-all">
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Mata Pelajaran</label>
+                                    <input type="text" id="cfgMapel" value="Akidah Akhlaq" oninput="syncHeaderControls()" placeholder="Ketik nama mata pelajaran..." class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2.5 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none font-semibold text-slate-800 transition-all">
                                 </div>
 
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">Kelas</label>
                                     <div class="relative">
                                         <select id="cfgKelas" onchange="syncHeaderControls()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2.5 pr-8 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none font-medium">
-                                            <option value="I (satu)" selected>Kelas I (MI)</option>
-                                            <option value="II (Dua)" selected>Kelas II (MI)</option>
-                                            <option value="III (Tiga)" selected>Kelas III (MI)</option>
-                                             <option value="IV (Empat)" selected>Kelas IV (MI)</option>
-                                            <option value="V (Lima)" selected>Kelas V (MI)</option>
-                                            <option value="VI (Enam)" selected>Kelas VI (MI)</option>
-                                             <option value="VII (Tujuh)" selected>Kelas VII (SMP)</option>
-                                            <option value="VIII (Delapan)" selected>Kelas VIII (SMP)</option>
+                                            <option value="I (satu)">Kelas I (MI)</option>
+                                            <option value="II (Dua)">Kelas II (MI)</option>
+                                            <option value="III (Tiga)">Kelas III (MI)</option>
+                                            <option value="IV (Empat)">Kelas IV (MI)</option>
+                                            <option value="V (Lima)">Kelas V (MI)</option>
+                                            <option value="VI (Enam)">Kelas VI (MI)</option>
+                                            <option value="VII (Tujuh)" selected>Kelas VII (SMP)</option>
+                                            <option value="VIII (Delapan)">Kelas VIII (SMP)</option>
                                             <option value="IX (Sembilan)">Kelas IX (SMP)</option>
-                                            <option value="X (Sepuluh)" selected>Kelas X (SMA)</option>
-                                            <option value="XI (Sebelas)" selected>Kelas XI (SMA)</option>
-                                            <option value="XII (Dua Belas)" selected>Kelas XII (SMA)</option>
+                                            <option value="X (Sepuluh)">Kelas X (SMA)</option>
                                         </select>
                                         <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-2.5 top-3 pointer-events-none"></i>
                                     </div>
@@ -471,21 +443,20 @@
                             <div id="count-config-container" class="bg-blue-50/60 p-4 rounded-xl border border-blue-200 space-y-3">
                                 <div class="flex items-center justify-between">
                                     <h4 class="text-xs font-bold text-blue-900 flex items-center gap-1.5">
-                                        <i data-lucide="sliders" class="w-4 h-4 text-blue-600"></i> Konfigurasi Jumlah Soal (Pilihan Ganda Hingga 30)
+                                        <i data-lucide="sliders" class="w-4 h-4 text-blue-600"></i> Konfigurasi Jumlah Soal
                                     </h4>
-                                    <span class="text-[10px] text-blue-700 bg-white px-2 py-0.5 rounded border border-blue-200 font-semibold" id="lblTotalSoalEstimasi">Total: 35 Soal</span>
+                                    <span class="text-[10px] text-blue-700 bg-white px-2 py-0.5 rounded border border-blue-200 font-semibold" id="lblTotalSoalEstimasi">Total: 25 Soal</span>
                                 </div>
 
-                                <!-- Dynamic Box for Combined or Single mode -->
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="boxCountControls">
-                                    <!-- Controls injected dynamically via JavaScript -->
+                                    <!-- Controls injected dynamically -->
                                 </div>
                             </div>
 
                             <!-- Topic / Material Input -->
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 mb-1.5">Materi Pelajaran / Rangkuman Bab</label>
-                                <textarea id="materiInput" rows="5" placeholder="Masukkan atau tempel rangkuman materi pelajaran di sini..." class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-3 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all resize-y"></textarea>
+                                <textarea id="materiInput" rows="5" placeholder="Masukkan atau tempel rangkuman materi pelajaran di sini..." class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-3 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all resize-y">Makanan yang diperbolehkan untuk dikonsumsi menurut ajaran Islam disebut makanan halal. Kebalikannya adalah makanan yang dilarang disebut haram.</textarea>
                             </div>
 
                             <!-- Difficulty Selector -->
@@ -511,32 +482,21 @@
                                 <summary class="flex items-center justify-between p-3.5 cursor-pointer text-xs font-bold text-slate-700 select-none">
                                     <span class="flex items-center gap-2">
                                         <i data-lucide="image-plus" class="w-4 h-4 text-blue-600"></i>
-                                        Pengaturan Kop Surat & Tempat Unggah Logo (Kiri & Kanan)
+                                        Pengaturan Kop Surat & Tempat Unggah Logo
                                     </span>
                                     <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
                                 </summary>
                                 <div class="p-4 pt-0 space-y-4 text-xs border-t border-slate-200 mt-1">
-                                    
-                                    <!-- LOGO UPLOAD SECTION -->
                                     <div class="bg-white p-3.5 rounded-xl border border-slate-200 space-y-3">
-                                        <h5 class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
-                                            <i data-lucide="upload-cloud" class="w-4 h-4 text-blue-600"></i> Tempat Unggah Logo Kop Surat
-                                        </h5>
-                                        
-                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                            <!-- LOGO KIRI UPLOAD -->
-                                            <div class="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-200">
-                                                <div class="flex-shrink-0">
-                                                    <img id="imgLogoLeftPreview" src="" alt="Logo Kiri" class="logo-preview-box">
-                                                </div>
-                                                <div class="space-y-1.5 flex-1 min-w-0">
-                                                    <span class="font-semibold text-slate-800 block text-[11px]">Logo Kiri (Kemenag/Pemda)</span>
-                                                    <input type="file" id="inputLogoLeft" accept="image/*" onchange="handleLogoUpload(event, 'left')" class="block w-full text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-[10px] file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
-                                                    <button onclick="resetLogo('left')" class="text-[10px] text-red-600 hover:underline font-medium">Reset Ke Vector Default</button>
-                                                </div>
+                                        <div class="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                                            <div class="flex-shrink-0">
+                                                <img id="imgLogoLeftPreview" src="" alt="Logo Kiri" class="logo-preview-box">
                                             </div>
-
-                                            
+                                            <div class="space-y-1.5 flex-1 min-w-0">
+                                                <span class="font-semibold text-slate-800 block text-[11px]">Masukan Logo Sekolah</span>
+                                                <input type="file" id="inputLogoLeft" accept="image/*" onchange="handleLogoUpload(event, 'left')" class="block w-full text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-[10px] file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                                                <button onclick="resetLogo('left')" class="text-[10px] text-red-600 hover:underline font-medium">Reset Ke Vector Default</button>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -566,16 +526,8 @@
                                             <input type="text" id="cfgTahunPelajaran" value="TAHUN PELAJARAN 2025/2026" oninput="syncHeaderControls()" class="w-full p-2 border border-slate-300 rounded-lg">
                                         </div>
                                         <div>
-                                            <label class="block font-medium text-slate-600 mb-1">Status Akreditasi</label>
-                                            <input type="text" id="cfgAkreditasi" value="Terakreditasi B" oninput="syncHeaderControls()" class="w-full p-2 border border-slate-300 rounded-lg">
-                                        </div>
-                                        <div>
                                             <label class="block font-medium text-slate-600 mb-1">Hari / Tanggal Ujian</label>
                                             <input type="text" id="cfgHariTgl" value="Senin, 18 Mei 2026" oninput="syncHeaderControls()" class="w-full p-2 border border-slate-300 rounded-lg">
-                                        </div>
-                                        <div>
-                                            <label class="block font-medium text-slate-600 mb-1">Alokasi Waktu</label>
-                                            <input type="text" id="cfgWaktu" value="90 Menit" oninput="syncHeaderControls()" class="w-full p-2 border border-slate-300 rounded-lg">
                                         </div>
                                     </div>
                                 </div>
@@ -584,7 +536,7 @@
                             <!-- Submit AI Button -->
                             <button onclick="generateSoalAI()" id="btnGenerate" class="w-full py-3.5 px-6 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 text-sm transition-all cursor-pointer">
                                 <i data-lucide="sparkles" class="w-5 h-5"></i>
-                                <span>Generate Naskah Soal F4 Presisi dengan AI &rarr;</span>
+                                <span>Generate Naskah Soal F4 Presisi dengan AI & Simpan ke Bank Soal &rarr;</span>
                             </button>
 
                             <!-- Notification Box -->
@@ -593,17 +545,13 @@
 
                         <!-- RIGHT COLUMN SIDEBAR CARDS -->
                         <div class="lg:col-span-4 space-y-5">
-
-                           
-
-                            <!-- Solusi Multi-Page F4 Card -->
                             <div class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-5 rounded-2xl shadow-md space-y-3">
                                 <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center">
                                     <i data-lucide="printer" class="w-6 h-6 text-amber-300"></i>
                                 </div>
                                 <h4 class="font-bold text-base leading-tight">Layout Cetak F4 Terstandarisasi</h4>
                                 <p class="text-xs text-blue-100 leading-relaxed">
-                                    Naskah soal tersusun rapat & rapi sesuai standar ujian resmi Indonesia. Memiliki margin kiri 1.8 cm agar siap distaples/dijilid tanpa menutupi teks.
+                                    Naskah soal & kisi-kisi tersusun rapi sesuai standar ujian resmi Indonesia dengan margin kiri 1.8 cm untuk penjilidan.
                                 </p>
                             </div>
 
@@ -618,6 +566,15 @@
                                         <p class="text-[10px] text-slate-500">Lihat hasil cetak di ukuran Folio/F4</p>
                                     </div>
                                 </button>
+                                <button onclick="switchView('kisi')" class="w-full p-3 rounded-xl flex items-center gap-3 hover:bg-slate-50 transition-all text-left group">
+                                    <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                                        <i data-lucide="list-checks" class="w-4 h-4"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-xs font-bold text-slate-800">Menu Kisi-Kisi Soal</h5>
+                                        <p class="text-[10px] text-slate-500">Tabel No, Materi, Indikator, dan Nomer</p>
+                                    </div>
+                                </button>
                                 <button onclick="switchView('kunci')" class="w-full p-3 rounded-xl flex items-center gap-3 hover:bg-slate-50 transition-all text-left group">
                                     <div class="p-2.5 bg-purple-50 text-purple-600 rounded-xl group-hover:bg-purple-600 group-hover:text-white transition-all">
                                         <i data-lucide="check-square" class="w-4 h-4"></i>
@@ -628,45 +585,44 @@
                                     </div>
                                 </button>
                             </div>
-
-                            <!-- Sample Datasets including 30 PG -->
-                            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
-                                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-                                    <h4 class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
-                                        <i data-lucide="clock" class="w-4 h-4 text-blue-600"></i> Paket Soal Sampel (Hingga 30 PG)
-                                    </h4>
-                                </div>
-
-                                <div class="space-y-3">
-                                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200/80 hover:border-blue-300 transition-all cursor-pointer flex items-center justify-between" onclick="loadSampleQuestions('Akidah Akhlaq 30')">
-                                        <div>
-                                            <h5 class="text-xs font-bold text-slate-800">Akidah Akhlaq - 30 PG + 5 Essai</h5>
-                                            <p class="text-[10px] text-slate-500">Paket Lengkap Ujian Semester (30 Soal)</p>
-                                        </div>
-                                        <span class="text-[10px] text-blue-600 font-bold">Muat &rarr;</span>
-                                    </div>
-                                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200/80 hover:border-blue-300 transition-all cursor-pointer flex items-center justify-between" onclick="loadSampleQuestions('Matematika 30')">
-                                        <div>
-                                            <h5 class="text-xs font-bold text-slate-800">Matematika - 30 PG + 5 Essai</h5>
-                                            <p class="text-[10px] text-slate-500">Paket Lengkap Asesmen F4 (30 Soal)</p>
-                                        </div>
-                                        <span class="text-[10px] text-blue-600 font-bold">Muat &rarr;</span>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
-
                     </div>
-
                 </div>
 
+                <!-- VIEW PREVIEW SOAL F4 -->
                 <div id="view-preview" class="hidden space-y-4">
-                    <!-- Control Bar for Page Spacing & Pagination -->
                     <div class="no-print bg-white border border-slate-200 rounded-xl p-3 shadow-sm flex flex-wrap items-center justify-between gap-3 text-xs">
-                        
-                        <!-- Spacing Controls -->
                         <div class="flex flex-wrap items-center gap-3">
+                            <!-- Pengaturan Font & Ukuran Font di Halaman Cetak -->
+                            <div class="flex items-center gap-1.5 border-l border-slate-200 pl-3">
+                                <span class="text-slate-500 font-medium">Jenis Font:</span>
+                                <select id="selFontFamily" onchange="changeExamFontFamily()" class="bg-slate-100 border border-slate-300 rounded px-2 py-1 font-semibold focus:outline-none">
+                                    <option value="'Times New Roman', Times, serif">1. Times New Roman</option>
+                                    <option value="Arial, sans-serif">2. Arial</option>
+                                    <option value="Calibri, sans-serif">3. Calibri</option>
+                                    <option value="Cambria, serif">4. Cambria</option>
+                                    <option value="'Arial Narrow', Arial, sans-serif" selected>5. Arial Narrow</option>
+                                    <option value="'Bookman Old Style', serif">6. Bookman Old Style</option>
+                                    <option value="Georgia, serif">7. Georgia</option>
+                                    <option value="Verdana, sans-serif">8. Verdana</option>
+                                    <option value="Tahoma, sans-serif">9. Tahoma</option>
+                                    <option value="Garamond, serif">10. Garamond</option>
+                                </select>
+                            </div>
+
+                            <div class="flex items-center gap-1.5 border-l border-slate-200 pl-3">
+                                <span class="text-slate-500 font-medium">Ukuran Font Soal:</span>
+                                <select id="selFontSize" onchange="changeExamFontSize()" class="bg-slate-100 border border-slate-300 rounded px-2 py-1 font-semibold focus:outline-none">
+                                    <option value="9pt">9 pt</option>
+                                    <option value="10pt">10 pt</option>
+                                    <option value="11pt">11 pt</option>
+                                    <option value="12pt">12 pt</option>
+                                    <option value="13pt">13 pt</option>
+                                    <option value="14pt" selected>14 pt</option>
+                                    
+                                </select>
+                            </div>
+
                             <div class="flex items-center gap-1 border-l border-slate-200 pl-3">
                                 <span class="text-slate-500 font-medium">Kepadatan Baris:</span>
                                 <select id="selDensity" onchange="changeQuestionDensity()" class="bg-slate-100 border border-slate-300 rounded px-2 py-1 font-semibold focus:outline-none">
@@ -683,22 +639,53 @@
                         </div>
                     </div>
 
-                    <!-- Live Edit & Layout Info -->
-                    
+                    <div class="overflow-x-auto pb-12 flex justify-center">
+                        <div id="examPaperContainer" class="exam-paper density-normal space-y-6 w-full max-w-[215mm]"></div>
+                    </div>
+                </div>
+
+                <!-- VIEW KISI-KISI SOAL -->
+                <div id="view-kisi" class="hidden space-y-4">
+                    <div class="no-print bg-white p-4 rounded-xl border border-slate-200 flex justify-between items-center">
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-sm">Kisi-Kisi Penulisan Soal Ujian</h3>
+                            <p class="text-xs text-slate-500">Tabel No, Materi, Indikator Soal, dan Nomer</p>
+                        </div>
+                        <button onclick="printKisiKisi()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5">
+                            <i data-lucide="printer" class="w-3.5 h-3.5"></i> Cetak Kisi-Kisi F4
+                        </button>
+                    </div>
 
                     <div class="overflow-x-auto pb-12 flex justify-center">
-                        <!-- EXAM PAPER CONTAINER WITH DYNAMIC MULTI-PAGE FLOW -->
-                        <div id="examPaperContainer" class="exam-paper density-normal space-y-6 w-full max-w-[215mm]">
-                            <!-- Dynamic F4 Pages Rendered Here -->
+                        <div class="exam-paper f4-page text-sm">
+                            <div class="kop-border text-center pb-2 mb-4">
+                                <h2 class="font-bold text-base md:text-lg tracking-wide uppercase">KISI-KISI PENULISAN SOAL UJIAN</h2>
+                                <p class="text-xs uppercase font-bold text-slate-700" id="kisiSubHeader">SOAL ASESMEN SUMATIF AKHIR SEMESTER - INFORMATIKA</p>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-xs font-serif table-kisi border-collapse border border-black">
+                                    <thead>
+                                        <tr class="bg-slate-100 text-center font-bold">
+                                            <th class="w-12 border border-black">No</th>
+                                            <th class="w-1/3 border border-black">Materi</th>
+                                            <th class="border border-black">Indikator Soal</th>
+                                            <th class="w-24 border border-black">Nomer</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="kisiTableBody">
+                                        <!-- Rendered dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- VIEW KUNCI JAWABAN -->
                 <div id="view-kunci" class="hidden space-y-4">
                     <div class="no-print bg-white p-4 rounded-xl border border-slate-200 flex justify-between items-center">
-                        <div>
-                           
-                        </div>
+                        <div></div>
                         <button onclick="printExamPaper()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5">
                             <i data-lucide="printer" class="w-3.5 h-3.5"></i> Cetak Kunci
                         </button>
@@ -711,31 +698,23 @@
                                 <p class="text-xs uppercase font-bold text-slate-700" id="kunciSubHeader">SOAL ASESMEN SUMATIF AKHIR SEMESTER - INFORMATIKA</p>
                             </div>
 
-                            <div id="kunciContainer" class="space-y-4">
-                                <!-- Answer keys rendered here -->
-                            </div>
+                            <div id="kunciContainer" class="space-y-4"></div>
                         </div>
                     </div>
                 </div>
 
+                <!-- VIEW BANK SOAL -->
                 <div id="view-bank" class="hidden space-y-4 bg-white p-6 rounded-2xl border border-slate-200">
-                    <h3 class="font-bold text-slate-800 text-base">Bank Soal Tersimpan</h3>
-                    <p class="text-xs text-slate-500">Koleksi paket soal kombinasi pilihan ganda hingga 30 soal</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                        <div class="p-4 border border-slate-200 rounded-xl hover:shadow-md transition-all">
-                            <h4 class="font-bold text-sm text-slate-800">Paket Akidah Akhlaq 30 PG + 5 Uraian</h4>
-                            <p class="text-xs text-slate-500 my-1">Topik: Asmaul Husna, Rukun Iman & Akhlak Terpuji • 30 PG + 5 Essai</p>
-                            <button onclick="loadSampleQuestions('Akidah Akhlaq 30')" class="mt-2 text-xs font-bold text-blue-600 hover:underline flex items-center gap-1">
-                                <span>Muat Paket 30 Soal Ini</span> &rarr;
-                            </button>
+                    <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base">Bank Soal Tersimpan</h3>
+                            <p class="text-xs text-slate-500">Semua naskah soal yang dibuat otomatis tersimpan di sini agar bisa dicetak ulang kapan saja.</p>
                         </div>
-                        <div class="p-4 border border-slate-200 rounded-xl hover:shadow-md transition-all">
-                            <h4 class="font-bold text-sm text-slate-800">Paket Matematika 30 PG + 5 Uraian</h4>
-                            <p class="text-xs text-slate-500 my-1">Topik: Operasi Hitung, Pecahan & Bangun Datar • 30 PG + 5 Essai</p>
-                            <button onclick="loadSampleQuestions('Matematika 30')" class="mt-2 text-xs font-bold text-blue-600 hover:underline flex items-center gap-1">
-                                <span>Muat Paket 30 Soal Ini</span> &rarr;
-                            </button>
-                        </div>
+                        <span class="text-xs font-bold bg-blue-50 text-blue-600 px-3 py-1 rounded-full border border-blue-200" id="bankTotalBadge">0 Paket Soal</span>
+                    </div>
+
+                    <div id="bankSoalGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                        <!-- Dynamic Bank Soal Items -->
                     </div>
                 </div>
 
@@ -768,141 +747,147 @@
                         <i data-lucide="eye" id="iconEyeApiKey" class="w-4 h-4"></i>
                     </button>
                 </div>
-                <p class="text-[11px] text-slate-500 leading-normal">
-                    API Key Anda tersimpan secara aman di peramban (localStorage) laptop Anda. Dapatkan kunci gratis di <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-blue-600 font-bold hover:underline">Google AI Studio &rarr;</a>
-                </p>
             </div>
 
             <div class="flex items-center justify-between pt-2 border-t border-slate-100">
-                <button onclick="clearApiKey()" class="px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 border border-rose-200 transition-all">
-                    Hapus Key
-                </button>
+                <button onclick="clearApiKey()" class="px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 border border-rose-200 transition-all">Hapus Key</button>
                 <div class="flex gap-2">
-                    <button onclick="closeApiKeyModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-all">
-                        Batal
-                    </button>
-                    <button onclick="saveApiKey()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/20 transition-all">
-                        Simpan API Key
-                    </button>
+                    <button onclick="closeApiKeyModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-all">Batal</button>
+                    <button onclick="saveApiKey()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/20 transition-all">Simpan API Key</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Default Vector SVGs for Kop Logos
         const DEFAULT_LOGO_LEFT = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="%23065f46" stroke="%2315803d" stroke-width="3"/><polygon points="50,15 62,38 88,38 67,53 75,78 50,62 25,78 33,53 12,38 38,38" fill="%23fbbf24"/><circle cx="50" cy="50" r="18" fill="%23ffffff"/><text x="50" y="54" font-size="10" font-weight="bold" font-family="sans-serif" text-anchor="middle" fill="%23065f46">KEMENAG</text></svg>`;
-        
-        const DEFAULT_LOGO_RIGHT = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 10 L90 30 L90 70 L50 90 L10 70 L10 30 Z" fill="%232563eb" stroke="%231d4ed8" stroke-width="3"/><path d="M50 25 L75 40 L75 65 L50 78 L25 65 L25 40 Z" fill="%23ffffff"/><circle cx="50" cy="52" r="14" fill="%23f59e0b"/><text x="50" y="55" font-size="9" font-weight="bold" font-family="sans-serif" text-anchor="middle" fill="%23ffffff">MI/SD</text></svg>`;
 
-        // Application State
         let questionDensity = "normal";
         let uploadedLogoLeft = localStorage.getItem("soalpro_logo_left") || DEFAULT_LOGO_LEFT;
-        let uploadedLogoRight = localStorage.getItem("soalpro_logo_right") || DEFAULT_LOGO_RIGHT;
-        let deferredPwaPrompt = null;
 
-        // Generator functions for dataset up to 30 PG
-        function generate30SamplePG(subject) {
+        // Generator Sampel Pilihan Ganda berdasarkan jumlah yang diminta
+        function generateSamplePG(subject, count = 20) {
             const list = [];
-            const topics = subject === 'Akidah Akhlaq' 
-                ? ["Asmaul Husna Al-'Adzim", "Asmaul Husna Al-Kabir", "Pengagungan Allah", "Kalimat Thoyyibah", "Perilaku Rendah Hati", "Rukun Iman", "Sifat Wajib Allah", "Malaikat Allah", "Kitab-Kitab Allah", "Rasul-Rasul Allah"]
-                : ["Operasi Bilangan", "Pecahan Sederhana", "Persamaan Linear", "Keliling Bangun Datar", "Luas Segitiga", "Kecepatan dan Jarak", "FPB dan KPK", "Perbandingan", "Sudut & Garis", "Statistika Dasar"];
-
-            for (let i = 1; i <= 30; i++) {
-                const topic = topics[(i - 1) % topics.length];
-                if (subject === 'Akidah Akhlaq') {
-                    list.push({
-                        id: i,
-                        question: ` Mengenai materi ${topic}: Apakah tindakan utama yang mencerminkan pemahaman materi ini?`,
-                        options: [
-                            "Meningkatkan ketaqwaan dan rasa syukur kepada Allah Swt.",
-                            "Menunjukkan kelebihan diri di depan teman-teman.",
-                            "Acuh tak acuh terhadap perintah kebaikan.",
-                            "Mengabaikan nasihat dari orang tua dan guru."
-                        ],
-                        correctIndex: 0
-                    });
-                } else {
-                    const numA = (i * 3) + 2;
-                    const numB = (i * 2) + 1;
-                    list.push({
-                        id: i,
-                        question: ` Hasil perhitungan matematika untuk ${topic}: Jika ${numA} + x = ${numA + numB}, berapakah nilai x?`,
-                        options: [`${numB}`, `${numB + 2}`, `${numB - 1}`, `${numB * 2}`],
-                        correctIndex: 0
-                    });
-                }
+            for (let i = 1; i <= count; i++) {
+                list.push({
+                    id: i,
+                    materi: "Ketentuan Makanan Halal dan Haram",
+                    indikator: `Peserta didik dapat mengidentifikasi hukum dan ketentuan makanan halal nomor ${i}.`,
+                    question: `Menurut ajaran Islam, makanan yang dikonsumsi umat muslim hendaknya memenuhi kriteria halal dan baik (thayyib). Apakah kriteria utama makanan halal nomor ${i}?`,
+                    options: [
+                        "Diperbolehkan oleh syariat Islam serta diperoleh dengan cara yang sah.",
+                        "Diolah dengan harga mahal dan disukai masyarakat luas.",
+                        "Memiliki rasa yang manis dan dikemas secara modern.",
+                        "Diimpor langsung dari luar negeri dengan lisensi resmi."
+                    ],
+                    correctIndex: 0
+                });
             }
             return list;
         }
 
-        // Sample Data Repositories
-        const sampleDatasets = {
-            "Akidah Akhlaq": {
-                pg: generate30SamplePG('Akidah Akhlaq').slice(0, 10),
-                uraian: [
-                    { id: 1, question: "Jelaskan arti dari Asmaul Husna Al-'Adzim!", answerKey: "Al-'Adzim artinya Allah Maha Agung. Tidak ada makhluk yang dapat menandingi keagungan-Nya.", explanation: "Skor 20 jika menyebutkan arti Maha Agung." },
-                    { id: 2, question: "Sebutkan 2 contoh ciptaan Allah Swt. yang membuktikan bahwa Allah Maha Besar (Al-Kabir)!", answerKey: "Contoh: Langit, bumi, lautan, tata surya, dan gunung-gunung.", explanation: "Skor 20 jika menyebutkan 2 contoh." },
-                    { id: 3, question: "Bagaimana cara kita membiasakan diri bersikap tidak sombong dalam kehidupan sekolah?", answerKey: "Menghargai teman dan mau berteman dengan siapa saja.", explanation: "Skor 20 untuk jawaban logis." },
-                    { id: 4, question: "Mengapa manusia tidak boleh memiliki sifat takabur/sombong?", answerKey: "Karena semua kehebatan adalah titipan Allah.", explanation: "Skor 20 jika menjelaskan alasan." },
-                    { id: 5, question: "Tuliskan lafaz kalimat thoyyibah untuk mengagungkan kebesaran Allah Swt.!", answerKey: "Allahu Akbar (Takbir) atau Subhanallah.", explanation: "Skor 20 untuk lafaz yang benar." }
-                ]
-            },
-            "Akidah Akhlaq 30": {
-                pg: generate30SamplePG('Akidah Akhlaq'),
-                uraian: [
-                    { id: 1, question: "Jelaskan perbedaan makna antara Asmaul Husna Al-'Adzim dan Al-Kabir!", answerKey: "Al-'Adzim berarti Allah Maha Agung, sedangkan Al-Kabir berarti Allah Maha Besar.", explanation: "Skor 20." },
-                    { id: 2, question: "Tuliskan 3 Hikmah mempelajari Asmaul Husna dalam kehidupan sehari-hari!", answerKey: "1. Hati menjadi tenang. 2. Makin taat beribadah. 3. Terhindar dari sifat sombong.", explanation: "Skor 20." },
-                    { id: 3, question: "Jelaskan mengapa kita harus selalu mengucapkan kalimat tayyibah ketika melihat keagungan ciptaan Allah!", answerKey: "Sebagai bentuk pengakuan kelemahan diri dan pujian setinggi-tingginya kepada Pencipta.", explanation: "Skor 20." },
-                    { id: 4, question: "Berikan contoh perilaku tawaduk (rendah hati) di lingkungan sekolah!", answerKey: "Tidak memamerkan nilai bagus, membantu teman yang kesulitan, dan menghormati guru.", explanation: "Skor 20." },
-                    { id: 5, question: "Bagaimana sikap seorang muslim ketika menghadapi musibah atau ujian kehidupan?", answerKey: "Bersabar, mengembalikan segalanya kepada Allah, dan terus berikhtiar.", explanation: "Skor 20." }
-                ]
-            },
-            "Matematika 30": {
-                pg: generate30SamplePG('Matematika'),
-                uraian: [
-                    { id: 1, question: "Sebuah kolam renang berbentuk persegi panjang memiliki panjang 20 m dan lebar 10 m. Hitunglah luas dan kelilingnya!", answerKey: "Luas = 200 m²; Keliling = 60 m.", explanation: "Skor 20." },
-                    { id: 2, question: "Selesaikan persamaan aljabar berikut: 4x - 8 = 2x + 12!", answerKey: "2x = 20 => x = 10.", explanation: "Skor 20." },
-                    { id: 3, question: "Tentukan FPB dan KPK dari bilangan 36 dan 48!", answerKey: "FPB = 12, KPK = 144.", explanation: "Skor 20." },
-                    { id: 4, question: "Sebuah mobil menempuh jarak 180 km dalam waktu 3 jam. Berapakah kecepatan rata-rata mobil tersebut?", answerKey: "Kecepatan = 180 / 3 = 60 km/jam.", explanation: "Skor 20." },
-                    { id: 5, question: "Ibu membeli 5 kg beras seharga Rp 75.000. Berapa harga 8 kg beras dengan kualitas yang sama?", answerKey: "Harga per kg = 15.000. Total = 8 x 15.000 = Rp 120.000.", explanation: "Skor 20." }
-                ]
+        // Generator Sampel Isian Singkat berdasarkan jumlah yang diminta
+        function generateSampleIsian(count = 5) {
+            const defaultIsian = [
+                { question: "Makanan yang diperbolehkan untuk dikonsumsi menurut ajaran Islam disebut makanan __________.", answerKey: "Halal" },
+                { question: "Segala jenis makanan atau minuman yang dilarang untuk dikonsumsi dalam syariat Islam dinamakan makanan __________.", answerKey: "Haram" },
+                { question: "Sebelum mulai makan atau minum, seorang muslim disunnahkan untuk membaca doa dan menggunakan tangan __________.", answerKey: "Kanan" },
+                { question: "Setiap minuman yang memabukkan dan menghilangkan akal sehat seperti khamr hukumnya adalah __________.", answerKey: "Haram" },
+                { question: "Hewan darat halal seperti sapi atau kambing wajib disembelih dengan menyebut nama __________.", answerKey: "Allah (Basmalah)" }
+            ];
+            const list = [];
+            for (let i = 1; i <= count; i++) {
+                const base = defaultIsian[(i - 1) % defaultIsian.length];
+                list.push({
+                    id: i,
+                    materi: "Ketentuan Makanan Halal",
+                    indikator: `Peserta didik dapat melengkapi istilah atau ketentuan materi nomor ${i}.`,
+                    question: base.question,
+                    answerKey: base.answerKey
+                });
+            }
+            return list;
+        }
+
+        // Generator Sampel Uraian/Essai berdasarkan jumlah yang diminta
+        function generateSampleUraian(count = 5) {
+            const defaultUraian = [
+                "Jelaskan pengertian makanan halal menurut istilah syariat Islam beserta contohnya!",
+                "Sebutkan hikmah yang dapat diambil dari mengonsumsi makanan yang halal dan thoyyib!",
+                "Mengapa Islam melarang umatnya mengonsumsi bangkai, darah, dan daging babi? Jelaskan!",
+                "Bagaimana tata cara penyembelihan hewan secara Islami agar dagingnya menjadi halal?",
+                "Sebutkan tiga contoh minuman yang diharamkan karena zatnya dan berikan alasannya!"
+            ];
+            const list = [];
+            for (let i = 1; i <= count; i++) {
+                const text = defaultUraian[(i - 1) % defaultUraian.length];
+                list.push({
+                    id: i,
+                    materi: "Analisis Ketentuan Makanan & Minuman Halal Haram",
+                    indikator: `Peserta didik dapat menganalisis dan menjelaskan ${text.toLowerCase()}`,
+                    question: text,
+                    answerKey: "Kebijaksanaan guru / kunci jawaban tersedia sesuai rubrik."
+                });
+            }
+            return list;
+        }
+
+        const defaultSamplePackages = {
+            "Akidah Akhlaq Kombinasi": {
+                id: "sample-akidah-kombinasi",
+                title: "Akidah Akhlaq - PG + Uraian",
+                mapel: "Akidah Akhlaq",
+                kelas: "VII (Tujuh)",
+                mode: "Kombinasi",
+                date: "2026-05-18",
+                pg: generateSamplePG('Akidah Akhlaq', 20),
+                isian: [],
+                uraian: generateSampleUraian(5)
             }
         };
 
-        // Active Exam State Data
-        let currentExamData = {
-            mode: "Kombinasi",
-            pg: [...sampleDatasets["Akidah Akhlaq 30"].pg],
-            uraian: [...sampleDatasets["Akidah Akhlaq 30"].uraian]
-        };
+        function getBankSoal() {
+            const stored = localStorage.getItem("soalpro_bank_soal");
+            if (!stored) {
+                localStorage.setItem("soalpro_bank_soal", JSON.stringify(defaultSamplePackages));
+                return defaultSamplePackages;
+            }
+            try { return JSON.parse(stored); } catch (e) { return defaultSamplePackages; }
+        }
+
+        function saveToBankSoal(packageData) {
+            const bank = getBankSoal();
+            const pkgId = packageData.id || "pkg_" + Date.now();
+            packageData.id = pkgId;
+            bank[pkgId] = packageData;
+            localStorage.setItem("soalpro_bank_soal", JSON.stringify(bank));
+            renderBankSoalGrid();
+        }
+
+        function deleteFromBankSoal(pkgId, e) {
+            if (e) e.stopPropagation();
+            if (!confirm("Apakah Anda yakin ingin menghapus paket soal ini dari Bank Soal?")) return;
+            const bank = getBankSoal();
+            delete bank[pkgId];
+            localStorage.setItem("soalpro_bank_soal", JSON.stringify(bank));
+            renderBankSoalGrid();
+            showToast("Naskah soal berhasil dihapus dari Bank Soal.", "info");
+        }
+
+        let currentExamData = JSON.parse(JSON.stringify(defaultSamplePackages["Akidah Akhlaq Kombinasi"]));
 
         window.addEventListener("DOMContentLoaded", () => {
             initLogos();
             initCountControls();
             updateApiKeyUI();
-            registerPwaServiceWorker();
+            renderBankSoalGrid();
             lucide.createIcons();
             handleTipeSoalChange();
         });
 
-        // ==========================================
-        // API KEY MANAGEMENT FUNCTIONS
-        // ==========================================
-        function getStoredApiKey() {
-            return localStorage.getItem("gemini_api_key") || "";
-        }
-
-        function openApiKeyModal() {
-            const currentKey = getStoredApiKey();
-            const input = document.getElementById("inputApiKeyGemini");
-            if (input) input.value = currentKey;
-            document.getElementById("apiKeyModal")?.classList.remove("hidden");
-        }
-
-        function closeApiKeyModal() {
-            document.getElementById("apiKeyModal")?.classList.add("hidden");
-        }
+        function getStoredApiKey() { return localStorage.getItem("gemini_api_key") || ""; }
+        function openApiKeyModal() { document.getElementById("apiKeyModal")?.classList.remove("hidden"); }
+        function closeApiKeyModal() { document.getElementById("apiKeyModal")?.classList.add("hidden"); }
 
         function saveApiKey() {
             const val = document.getElementById("inputApiKeyGemini")?.value.trim() || "";
@@ -919,151 +904,70 @@
 
         function clearApiKey() {
             localStorage.removeItem("gemini_api_key");
-            const input = document.getElementById("inputApiKeyGemini");
-            if (input) input.value = "";
+            document.getElementById("inputApiKeyGemini").value = "";
             updateApiKeyUI();
             showToast("API Key Gemini telah dihapus.", "info");
         }
 
         function toggleApiKeyVisibility() {
             const input = document.getElementById("inputApiKeyGemini");
-            const icon = document.getElementById("iconEyeApiKey");
-            if (input.type === "password") {
-                input.type = "text";
-                icon.setAttribute("data-lucide", "eye-off");
-            } else {
-                input.type = "password";
-                icon.setAttribute("data-lucide", "eye");
-            }
-            lucide.createIcons();
+            input.type = input.type === "password" ? "text" : "password";
         }
 
         function updateApiKeyUI() {
             const key = getStoredApiKey();
             const badge = document.getElementById("apiKeyBadge");
             const dot = document.getElementById("headerApiKeyStatus");
-            const infoBox = document.getElementById("apiKeyInfoBox");
-
-            if (key) {
-                if (badge) {
-                    badge.innerText = "Aktif";
-                    badge.className = "text-[9px] px-1.5 py-0.5 rounded font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
-                }
-                if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-500";
-                if (infoBox) {
-                    const masked = key.substring(0, 6) + "..." + key.substring(key.length - 4);
-                    infoBox.innerHTML = `
-                        <div class="flex items-center justify-between">
-                            <span class="font-mono text-slate-700 font-bold">${masked}</span>
-                            <span class="text-[10px] text-emerald-600 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded font-semibold">Tersimpan</span>
-                        </div>
-                    `;
-                }
-            } else {
-                if (badge) {
-                    badge.innerText = "Belum Set";
-                    badge.className = "text-[9px] px-1.5 py-0.5 rounded font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30";
-                }
-                if (dot) dot.className = "w-2 h-2 rounded-full bg-rose-500";
-                if (infoBox) {
-                    infoBox.innerHTML = `
-                        <span class="text-slate-500">Kunci API belum diatur. Menggunakan mode sampel default.</span>
-                    `;
-                }
+            if (badge) {
+                badge.innerText = key ? "Aktif" : "Belum Set";
+                badge.className = key ? "text-[9px] px-1.5 py-0.5 rounded font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" : "text-[9px] px-1.5 py-0.5 rounded font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30";
             }
-        }
-
-        function registerPwaServiceWorker() {
-            if ('serviceWorker' in navigator) {
-                const swCode = `
-                    self.addEventListener('install', e => self.skipWaiting());
-                    self.addEventListener('activate', e => self.clients.claim());
-                    self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
-                `;
-                const blob = new Blob([swCode], { type: 'text/javascript' });
-                navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
-            }
-
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPwaPrompt = e;
-                const banner = document.getElementById('pwa-install-banner');
-                if (banner) banner.classList.remove('hidden');
-            });
-        }
-
-        function triggerPwaInstall() {
-            if (deferredPwaPrompt) {
-                deferredPwaPrompt.prompt();
-                deferredPwaPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        showToast("Aplikasi AI SoalPro berhasil di-install ke Laptop!", "success");
-                    }
-                    deferredPwaPrompt = null;
-                });
-            } else {
-                showToast("Aplikasi siap di-install! Klik menu 'Install' atau 'Add to Home Screen' di browser laptop Anda.", "info");
-            }
+            if (dot) dot.className = key ? "w-2 h-2 rounded-full bg-emerald-500" : "w-2 h-2 rounded-full bg-rose-500";
         }
 
         function initLogos() {
             const imgLeft = document.getElementById("imgLogoLeftPreview");
-            const imgRight = document.getElementById("imgLogoRightPreview");
             if (imgLeft) imgLeft.src = uploadedLogoLeft;
-            if (imgRight) imgRight.src = uploadedLogoRight;
         }
 
         function handleLogoUpload(event, position) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
-                const base64Data = e.target.result;
-                if (position === 'left') {
-                    uploadedLogoLeft = base64Data;
-                    localStorage.setItem("soalpro_logo_left", base64Data);
-                    document.getElementById("imgLogoLeftPreview").src = base64Data;
-                } else {
-                    uploadedLogoRight = base64Data;
-                    localStorage.setItem("soalpro_logo_right", base64Data);
-                    document.getElementById("imgLogoRightPreview").src = base64Data;
-                }
-                showToast(`Logo ${position === 'left' ? 'Kiri' : 'Kanan'} Kop Surat berhasil diperbarui!`, "success");
+                uploadedLogoLeft = e.target.result;
+                localStorage.setItem("soalpro_logo_left", uploadedLogoLeft);
+                document.getElementById("imgLogoLeftPreview").src = uploadedLogoLeft;
+                showToast("Logo berhasil diperbarui!", "success");
             };
             reader.readAsDataURL(file);
         }
 
         function resetLogo(position) {
-            if (position === 'left') {
-                uploadedLogoLeft = DEFAULT_LOGO_LEFT;
-                localStorage.removeItem("soalpro_logo_left");
-                document.getElementById("imgLogoLeftPreview").src = DEFAULT_LOGO_LEFT;
-            } else {
-                uploadedLogoRight = DEFAULT_LOGO_RIGHT;
-                localStorage.removeItem("soalpro_logo_right");
-                document.getElementById("imgLogoRightPreview").src = DEFAULT_LOGO_RIGHT;
-            }
-            showToast(`Logo ${position === 'left' ? 'Kiri' : 'Kanan'} dikembalikan ke default.`, "info");
+            uploadedLogoLeft = DEFAULT_LOGO_LEFT;
+            localStorage.removeItem("soalpro_logo_left");
+            document.getElementById("imgLogoLeftPreview").src = DEFAULT_LOGO_LEFT;
+            showToast("Logo dikembalikan ke default.", "info");
         }
 
         function handleTipeSoalChange() {
             const selectedMode = document.querySelector('input[name="tipeSoal"]:checked')?.value || "Kombinasi";
             currentExamData.mode = selectedMode;
 
-            // Highlight Cards
-            ["kombinasi", "pg", "uraian", "isian"].forEach(t => {
+            ["kombinasi", "pg-isian", "pg", "isian"].forEach(t => {
                 const card = document.getElementById(`card-type-${t}`);
                 if (card) {
                     card.className = "cursor-pointer border border-slate-200 hover:border-slate-300 p-3 rounded-xl flex flex-col items-center justify-center gap-1 text-center text-xs font-medium text-slate-600 transition-all";
                 }
             });
 
-            const activeCardId = selectedMode === 'Kombinasi' ? 'card-type-kombinasi' :
-                               selectedMode === 'Pilihan Ganda' ? 'card-type-pg' :
-                               selectedMode === 'Uraian' ? 'card-type-uraian' : 'card-type-isian';
-            
-            const activeCard = document.getElementById(activeCardId);
+            const activeMap = {
+                'Kombinasi': 'card-type-kombinasi',
+                'PG + Isian': 'card-type-pg-isian',
+                'Pilihan Ganda': 'card-type-pg',
+                'Isian Singkat': 'card-type-isian'
+            };
+            const activeCard = document.getElementById(activeMap[selectedMode]);
             if (activeCard) {
                 activeCard.className = "cursor-pointer border-2 border-blue-600 bg-blue-50/70 p-3 rounded-xl flex flex-col items-center justify-center gap-1 text-center text-xs font-bold text-blue-700 shadow-2xs transition-all";
             }
@@ -1074,21 +978,35 @@
         function initCountControls() {
             const container = document.getElementById("boxCountControls");
             if (!container) return;
-
             const mode = currentExamData.mode;
 
-            if (mode === "Kombinasi") {
+            if (mode === "PG + Isian") {
                 container.innerHTML = `
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Jumlah Pilihan Ganda </label>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Jumlah Pilihan Ganda</label>
                         <select id="selJumlahPG" onchange="updateTotalEstimasi()" class="w-full text-xs bg-white border border-slate-300 rounded-lg p-2 font-semibold">
-                            <option value="5">5 Soal PG</option>
                             <option value="10">10 Soal PG</option>
-                            <option value="15">15 Soal PG</option>
+                            <option value="15" selected>15 Soal PG</option>
                             <option value="20">20 Soal PG</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Jumlah Isian Singkat</label>
+                        <select id="selJumlahIsian" onchange="updateTotalEstimasi()" class="w-full text-xs bg-white border border-slate-300 rounded-lg p-2 font-semibold">
+                            <option value="5" selected>5 Soal Isian</option>
+                            <option value="10">10 Soal Isian</option>
+                        </select>
+                    </div>
+                `;
+            } else if (mode === "Kombinasi") {
+                container.innerHTML = `
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Jumlah Pilihan Ganda</label>
+                        <select id="selJumlahPG" onchange="updateTotalEstimasi()" class="w-full text-xs bg-white border border-slate-300 rounded-lg p-2 font-semibold">
+                            <option value="15">15 Soal PG</option>
+                            <option value="20" selected>20 Soal PG</option>
                             <option value="25">25 Soal PG</option>
                             <option value="30">30 Soal PG</option>
-                            <option value="35" selected>35 Soal PG </option>
                         </select>
                     </div>
                     <div>
@@ -1100,27 +1018,23 @@
                         </select>
                     </div>
                 `;
-            } else if (mode === "Pilihan Ganda") {
+            } else if (mode === "Isian Singkat") {
                 container.innerHTML = `
                     <div class="sm:col-span-2">
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Jumlah Soal Pilihan Ganda</label>
-                        <select id="selJumlahPG" onchange="updateTotalEstimasi()" class="w-full text-xs bg-white border border-slate-300 rounded-lg p-2 font-semibold">
-                            <option value="10">10 Soal PG</option>
-                            <option value="15">15 Soal PG</option>
-                            <option value="20">20 Soal PG</option>
-                            <option value="25">25 Soal PG</option>
-                            <option value="30" selected>30 Soal Pilihan Ganda (Maksimal)</option>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Jumlah Soal Isian Singkat</label>
+                        <select id="selJumlahIsian" onchange="updateTotalEstimasi()" class="w-full text-xs bg-white border border-slate-300 rounded-lg p-2 font-semibold">
+                            <option value="10" selected>10 Soal Isian</option>
+                            <option value="15">15 Soal Isian</option>
                         </select>
                     </div>
                 `;
             } else {
                 container.innerHTML = `
                     <div class="sm:col-span-2">
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Jumlah Soal ${mode}</label>
-                        <select id="selJumlahUraian" onchange="updateTotalEstimasi()" class="w-full text-xs bg-white border border-slate-300 rounded-lg p-2 font-semibold">
-                            <option value="5" selected>5 Soal ${mode}</option>
-                            <option value="10">10 Soal ${mode}</option>
-                            <option value="15">15 Soal ${mode}</option>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Jumlah Soal Pilihan Ganda</label>
+                        <select id="selJumlahPG" onchange="updateTotalEstimasi()" class="w-full text-xs bg-white border border-slate-300 rounded-lg p-2 font-semibold">
+                            <option value="20">20 Soal PG</option>
+                            <option value="30" selected>30 Soal PG</option>
                         </select>
                     </div>
                 `;
@@ -1129,108 +1043,138 @@
         }
 
         function updateTotalEstimasi() {
-            const pgCount = parseInt(document.getElementById("selJumlahPG")?.value || "0");
-            const uraianCount = parseInt(document.getElementById("selJumlahUraian")?.value || "0");
+            const pg = parseInt(document.getElementById("selJumlahPG")?.value || "0");
+            const isian = parseInt(document.getElementById("selJumlahIsian")?.value || "0");
+            const uraian = parseInt(document.getElementById("selJumlahUraian")?.value || "0");
             const lbl = document.getElementById("lblTotalSoalEstimasi");
-            if (lbl) {
-                lbl.innerText = `Total Soal: ${pgCount + uraianCount} Soal`;
-            }
+            if (lbl) lbl.innerText = `Total: ${pg + isian + uraian} Soal`;
         }
 
         function showToast(message, type = "info") {
             const statusBox = document.getElementById("statusBox");
             if (!statusBox) return;
-
-            statusBox.classList.remove("hidden", "bg-emerald-50", "text-emerald-800", "border-emerald-200", "bg-rose-50", "text-rose-800", "border-rose-200", "bg-blue-50", "text-blue-800", "border-blue-200");
-
-            if (type === "success") {
-                statusBox.classList.add("bg-emerald-50", "text-emerald-800", "border-emerald-200");
-            } else if (type === "error") {
-                statusBox.classList.add("bg-rose-50", "text-rose-800", "border-rose-200");
-            } else {
-                statusBox.classList.add("bg-blue-50", "text-blue-800", "border-blue-200");
-            }
-
+            statusBox.classList.remove("hidden");
             statusBox.innerHTML = `<strong>Status:</strong> ${message}`;
-            setTimeout(() => {
-                statusBox.classList.add("hidden");
-            }, 5000);
+            setTimeout(() => statusBox.classList.add("hidden"), 4000);
         }
 
         function loadSampleQuestions(key) {
-            const dataset = sampleDatasets[key];
+            const bank = getBankSoal();
+            const dataset = bank[key] || defaultSamplePackages[key];
             if (dataset) {
-                currentExamData.pg = [...dataset.pg];
-                currentExamData.uraian = [...dataset.uraian];
-                showToast(`Sampel paket soal '${key}' berhasil dimuat dengan ${currentExamData.pg.length} PG!`, "success");
+                currentExamData = JSON.parse(JSON.stringify(dataset));
+                if (dataset.mapel) document.getElementById("cfgMapel").value = dataset.mapel;
+                if (dataset.kelas) document.getElementById("cfgKelas").value = dataset.kelas;
+                syncHeaderControls();
+                showToast(`Paket soal '${dataset.title || key}' berhasil dimuat dari Bank Soal!`, "success");
                 switchView("preview");
             }
         }
 
+        function renderBankSoalGrid() {
+            const grid = document.getElementById("bankSoalGrid");
+            const countLabel = document.getElementById("bankCountLabel");
+            const totalBadge = document.getElementById("bankTotalBadge");
+            if (!grid) return;
+
+            const bank = getBankSoal();
+            const keys = Object.keys(bank);
+
+            if (countLabel) countLabel.innerText = keys.length;
+            if (totalBadge) totalBadge.innerText = `${keys.length} Paket Soal`;
+
+            grid.innerHTML = "";
+            keys.forEach(key => {
+                const pkg = bank[key];
+                const pgCount = pkg.pg ? pkg.pg.length : 0;
+                const isianCount = pkg.isian ? pkg.isian.length : 0;
+                const uraianCount = pkg.uraian ? pkg.uraian.length : 0;
+                const title = pkg.title || `${pkg.mapel || 'Soal Ujian'} (${pgCount} PG + ${uraianCount} Uraian)`;
+
+                const item = document.createElement("div");
+                item.className = "p-4 border border-slate-200 rounded-xl hover:shadow-md transition-all bg-slate-50/50 flex flex-col justify-between";
+                item.innerHTML = `
+                    <div>
+                        <div class="flex items-start justify-between gap-2">
+                            <h4 class="font-bold text-sm text-slate-800">${title}</h4>
+                            <button onclick="deleteFromBankSoal('${pkg.id || key}', event)" class="text-slate-400 hover:text-red-600 p-1 rounded-lg" title="Hapus">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-500 my-1">Mata Pelajaran: <strong>${pkg.mapel || '-'}</strong> • Kelas: ${pkg.kelas || '-'}</p>
+                        <p class="text-[11px] text-slate-400">Komposisi: ${pgCount} PG, ${isianCount} Isian, ${uraianCount} Essai</p>
+                    </div>
+                    <div class="mt-3 pt-2 border-t border-slate-200/60 flex items-center justify-between">
+                        <span class="text-[10px] text-slate-400">Tersimpan otomatis</span>
+                        <button onclick="loadSampleQuestions('${pkg.id || key}')" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                            <span>Muat & Cetak Ulang</span> &rarr;
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(item);
+            });
+            lucide.createIcons();
+        }
+
         function resetMateriInput() {
-            document.getElementById("materiInput").value = "Mengenal Perangkat Keras dan Perangkat Lunak Komputer, Jaringan Internet dasar, Berpikir Komputasional, dan Etika Digital.";
-            showToast("Contoh materi berhasil diisikan!", "info");
+            document.getElementById("materiInput").value = "Makanan yang diperbolehkan untuk dikonsumsi menurut ajaran Islam disebut makanan halal. Kebalikannya adalah makanan yang dilarang disebut haram.";
         }
 
         function switchView(viewName) {
-            ["generator", "preview", "kunci", "bank"].forEach(v => {
-                const el = document.getElementById(`view-${v}`);
+            ["generator", "preview", "kisi", "kunci", "bank"].forEach(v => {
+                document.getElementById(`view-${v}`)?.classList.add("hidden");
                 const nav = document.getElementById(`nav-${v}`);
-                if (el) el.classList.add("hidden");
-                if (nav) {
-                    nav.className = "nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all";
-                }
+                if (nav) nav.className = "nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800/60 transition-all";
             });
 
-            const activeView = document.getElementById(`view-${viewName}`);
+            document.getElementById(`view-${viewName}`)?.classList.remove("hidden");
             const activeNav = document.getElementById(`nav-${viewName}`);
-            
-            if (activeView) activeView.classList.remove("hidden");
-            if (activeNav) {
-                activeNav.className = "nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-blue-600 text-white shadow-md shadow-blue-600/20 transition-all";
-            }
+            if (activeNav) activeNav.className = "nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-blue-600 text-white shadow-md shadow-blue-600/20 transition-all";
 
-            if (viewName === "preview") {
-                renderQuestions();
-            } else if (viewName === "kunci") {
-                renderKunciJawaban();
-            }
+            if (viewName === "preview") renderQuestions();
+            else if (viewName === "kisi") renderKisiKisi();
+            else if (viewName === "kunci") renderKunciJawaban();
+            else if (viewName === "bank") renderBankSoalGrid();
         }
 
         function changeQuestionDensity() {
             questionDensity = document.getElementById("selDensity")?.value || "normal";
             const container = document.getElementById("examPaperContainer");
-            if (container) {
-                container.className = `exam-paper density-${questionDensity} space-y-6 w-full max-w-[215mm]`;
-            }
+            if (container) container.className = `exam-paper density-${questionDensity} space-y-6 w-full max-w-[215mm]`;
         }
 
-        function printExamPaper() {
-            const isKunci = !document.getElementById("view-kunci").classList.contains("hidden");
-            if (!isKunci) {
-                switchView("preview");
-            }
-            setTimeout(() => {
-                window.print();
-            }, 100);
+        function changeExamFontFamily() {
+            const val = document.getElementById("selFontFamily")?.value || "'Arial Narrow', Arial, sans-serif";
+            document.documentElement.style.setProperty('--custom-font', val);
+        }
+
+        function changeExamFontSize() {
+            const val = document.getElementById("selFontSize")?.value || "14pt";
+            document.documentElement.style.setProperty('--custom-font-size', val);
+        }
+
+        function printExamPaper() { window.print(); }
+        function printKisiKisi() {
+            switchView("kisi");
+            setTimeout(() => { window.print(); }, 100);
         }
 
         function syncHeaderControls() {
             const mapel = document.getElementById("cfgMapel")?.value || "Informatika";
-            const subKunci = document.getElementById("kunciSubHeader");
-            if (subKunci) subKunci.innerText = `SOAL ASESMEN SUMATIF AKHIR SEMESTER - ${mapel.toUpperCase()}`;
+            document.getElementById("kunciSubHeader").innerText = `SOAL ASESMEN SUMATIF AKHIR SEMESTER - ${mapel.toUpperCase()}`;
+            document.getElementById("kisiSubHeader").innerText = `SOAL ASESMEN SUMATIF AKHIR SEMESTER - ${mapel.toUpperCase()}`;
         }
 
         async function generateSoalAI() {
             const apiKey = getStoredApiKey();
             const materi = document.getElementById("materiInput")?.value.trim();
-            const mapel = document.getElementById("cfgMapel")?.value || "Informatika";
-            const kelas = document.getElementById("cfgKelas")?.value || "VII";
-            const difficulty = document.querySelector('input[name="tingkatKesulitan"]:checked')?.value || "Sedang";
-            
-            const pgCount = parseInt(document.getElementById("selJumlahPG")?.value || "30");
-            const uraianCount = parseInt(document.getElementById("selJumlahUraian")?.value || "5");
+            const mapel = document.getElementById("cfgMapel")?.value || "Akidah Akhlaq";
+            const kelas = document.getElementById("cfgKelas")?.value || "VII (Tujuh)";
             const mode = currentExamData.mode;
+
+            const pgCount = mode.includes("PG") || mode === "Pilihan Ganda" || mode === "Kombinasi" ? parseInt(document.getElementById("selJumlahPG")?.value || "20") : 0;
+            const isianCount = mode.includes("Isian") || mode === "Isian Singkat" ? parseInt(document.getElementById("selJumlahIsian")?.value || "5") : 0;
+            const uraianCount = mode === "Kombinasi" ? parseInt(document.getElementById("selJumlahUraian")?.value || "5") : 0;
 
             if (!materi) {
                 showToast("Harap isi materi pelajaran terlebih dahulu!", "error");
@@ -1239,91 +1183,147 @@
 
             const btn = document.getElementById("btnGenerate");
             btn.disabled = true;
-            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i><span>Sedang Memproses AI Generate (${pgCount} PG)...</span>`;
-            lucide.createIcons();
+            btn.innerHTML = `<span>Sedang Memproses AI...</span>`;
 
             if (!apiKey) {
                 setTimeout(() => {
-                    const samplePG = generate30SamplePG(mapel).slice(0, mode === 'Uraian' ? 0 : pgCount);
-                    const sampleUraian = sampleDatasets["Akidah Akhlaq"].uraian.slice(0, mode === 'Pilihan Ganda' ? 0 : uraianCount);
-                    currentExamData.pg = samplePG;
-                    currentExamData.uraian = sampleUraian;
+                    const samplePG = pgCount > 0 ? generateSamplePG(mapel, pgCount) : [];
+                    const sampleIsian = isianCount > 0 ? generateSampleIsian(isianCount) : [];
+                    const sampleUraian = uraianCount > 0 ? generateSampleUraian(uraianCount) : [];
+                    
+                    const newPkg = {
+                        id: "pkg_" + Date.now(),
+                        title: `${mapel} (${samplePG.length} PG + ${sampleUraian.length} Uraian)`,
+                        mapel: mapel,
+                        kelas: kelas,
+                        mode: mode,
+                        date: new Date().toISOString().split('T')[0],
+                        pg: samplePG,
+                        isian: sampleIsian,
+                        uraian: sampleUraian
+                    };
+
+                    currentExamData = newPkg;
+                    saveToBankSoal(newPkg);
 
                     btn.disabled = false;
-                    btn.innerHTML = `<i data-lucide="sparkles" class="w-5 h-5"></i><span>Generate Naskah Soal F4 Presisi dengan AI &rarr;</span>`;
+                    btn.innerHTML = `<i data-lucide="sparkles" class="w-5 h-5"></i><span>Generate Naskah Soal F4 Presisi dengan AI & Simpan ke Bank Soal &rarr;</span>`;
                     lucide.createIcons();
 
-                    showToast(`API Key belum diset. Menampilkan ${samplePG.length} PG + ${sampleUraian.length} Essai dari template standar. Klik menu 'API Key Gemini' untuk menambahkan key Anda.`, "info");
+                    showToast("Soal berhasil dibuat & otomatis disimpan ke Bank Soal!", "success");
                     switchView("preview");
-                }, 1200);
+                }, 1000);
                 return;
             }
 
-            const promptText = `Arahkan sebagai pembuat soal ujian guru profesional Indonesia.
-Buat soal naskah ujian resmi F4 untuk:
-- Mata Pelajaran: ${mapel}
-- Kelas: ${kelas}
-- Tingkat Kesulitan: ${difficulty}
-- Tipe Soal: ${mode}
-- Jumlah Soal PG: ${mode === 'Uraian' ? 0 : pgCount}
-- Jumlah Soal Uraian: ${mode === 'Pilihan Ganda' ? 0 : uraianCount}
-- Rangkuman Materi: ${materi}
-
-Kembalikan format JSON persis sesuai schema berikut tanpa markdown lain:
+            try {
+                const promptText = `Buatkan soal ujian F4 dan kisi-kisinya untuk Mata Pelajaran: ${mapel}, Kelas: ${kelas}, Materi: ${materi}.
+Tipe Soal: ${mode}.
+Jumlah PG: ${pgCount}, Jumlah Uraian/Essai: ${uraianCount}, Jumlah Isian Singkat: ${isianCount}.
+Kembalikan JSON format persis sesuai jumlah yang diminta tanpa markdown lain:
 {
-  "pg": [
-    {
-      "id": 1,
-      "question": "Teks pertanyaan PG",
-      "options": ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-      "correctIndex": 0
-    }
-  ],
-  "uraian": [
-    {
-      "id": 1,
-      "question": "Teks pertanyaan uraian",
-      "answerKey": "Kunci jawaban lengkap",
-      "explanation": "Pedoman penskoran"
-    }
-  ]
+  "pg": [{"id": 1, "materi": "Materi", "indikator": "Indikator", "question": "Soal", "options": ["A","B","C","D"], "correctIndex": 0}],
+  "uraian": [{"id": 1, "materi": "Materi", "indikator": "Indikator", "question": "Soal Uraian", "answerKey": "Kunci"}],
+  "isian": [{"id": 1, "materi": "Materi", "indikator": "Indikator", "question": "Pertanyaan __________.", "answerKey": "Jawaban"}]
 }`;
 
-            try {
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: promptText }] }],
-                        generationConfig: {
-                            responseMimeType: "application/json"
-                        }
-                    })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }], generationConfig: { responseMimeType: "application/json" } })
                 });
 
                 const result = await response.json();
                 const jsonText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-
                 if (jsonText) {
                     const parsed = JSON.parse(jsonText);
-                    currentExamData.pg = parsed.pg || [];
-                    currentExamData.uraian = parsed.uraian || [];
-                    showToast(`Berhasil meregenerasi ${currentExamData.pg.length} PG dan ${currentExamData.uraian.length} Essai dengan Gemini AI!`, "success");
+                    const newPkg = {
+                        id: "pkg_" + Date.now(),
+                        title: `${mapel} AI (${parsed.pg ? parsed.pg.length : 0} PG + ${parsed.uraian ? parsed.uraian.length : 0} Uraian)`,
+                        mapel: mapel,
+                        kelas: kelas,
+                        mode: mode,
+                        date: new Date().toISOString().split('T')[0],
+                        pg: parsed.pg || [],
+                        isian: parsed.isian || [],
+                        uraian: parsed.uraian || []
+                    };
+                    currentExamData = newPkg;
+                    saveToBankSoal(newPkg);
+                    showToast("Soal AI berhasil dibuat & otomatis disimpan ke Bank Soal!", "success");
                     switchView("preview");
-                } else {
-                    throw new Error("Respon AI tidak lengkap.");
                 }
-            } catch (err) {
-                console.error(err);
-                showToast("Gagal menghubungi Gemini AI. Memuat data sampel standar.", "error");
-                currentExamData.pg = generate30SamplePG(mapel).slice(0, pgCount);
-                currentExamData.uraian = sampleDatasets["Akidah Akhlaq"].uraian.slice(0, uraianCount);
+            } catch (e) {
+                showToast("Gagal menghubungi AI. Memuat sampel standar sesuai jumlah pilihan.", "error");
+                const samplePG = generateSamplePG(mapel, pgCount);
+                const sampleIsian = generateSampleIsian(isianCount);
+                const sampleUraian = generateSampleUraian(uraianCount);
+                const fallbackPkg = {
+                    id: "pkg_" + Date.now(),
+                    title: `${mapel} (Fallback)`,
+                    mapel: mapel,
+                    kelas: kelas,
+                    mode: mode,
+                    pg: samplePG,
+                    isian: sampleIsian,
+                    uraian: sampleUraian
+                };
+                currentExamData = fallbackPkg;
+                saveToBankSoal(fallbackPkg);
                 switchView("preview");
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `<i data-lucide="sparkles" class="w-5 h-5"></i><span>Generate Naskah Soal F4 Presisi dengan AI &rarr;</span>`;
+                btn.innerHTML = `<i data-lucide="sparkles" class="w-5 h-5"></i><span>Generate Naskah Soal F4 Presisi dengan AI & Simpan ke Bank Soal &rarr;</span>`;
                 lucide.createIcons();
+            }
+        }
+
+        // RENDER KISI-KISI TABLE (NO, MATERI, INDIKATOR SOAL, NOMER)
+        function renderKisiKisi() {
+            const tbody = document.getElementById("kisiTableBody");
+            if (!tbody) return;
+            tbody.innerHTML = "";
+
+            let indexNumber = 1;
+
+            if (currentExamData.pg && currentExamData.pg.length > 0) {
+                currentExamData.pg.forEach((item, idx) => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td class="text-center font-bold border border-black">${indexNumber++}</td>
+                        <td contenteditable="true" class="border border-black">${item.materi || 'Materi Pilihan Ganda'}</td>
+                        <td contenteditable="true" class="border border-black">${item.indikator || 'Peserta didik dapat memahami konsep soal.'}</td>
+                        <td class="text-center font-bold border border-black" contenteditable="true">PG ${idx + 1}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            if (currentExamData.isian && currentExamData.isian.length > 0) {
+                currentExamData.isian.forEach((item, idx) => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td class="text-center font-bold border border-black">${indexNumber++}</td>
+                        <td contenteditable="true" class="border border-black">${item.materi || 'Materi Isian Singkat'}</td>
+                        <td contenteditable="true" class="border border-black">${item.indikator || 'Peserta didik dapat melengkapi kalimat.'}</td>
+                        <td class="text-center font-bold border border-black" contenteditable="true">Isian ${idx + 1}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            if (currentExamData.uraian && currentExamData.uraian.length > 0) {
+                currentExamData.uraian.forEach((item, idx) => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td class="text-center font-bold border border-black">${indexNumber++}</td>
+                        <td contenteditable="true" class="border border-black">${item.materi || 'Materi Uraian'}</td>
+                        <td contenteditable="true" class="border border-black">${item.indikator || 'Peserta didik dapat menjelaskan materi.'}</td>
+                        <td class="text-center font-bold border border-black" contenteditable="true">Essai ${idx + 1}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
             }
         }
 
@@ -1332,17 +1332,16 @@ Kembalikan format JSON persis sesuai schema berikut tanpa markdown lain:
             if (!container) return;
             container.innerHTML = "";
 
-            const mapel = document.getElementById("cfgMapel")?.value || "Informatika";
-            const kelas = document.getElementById("cfgKelas")?.value || "VII (Tujuh)";
+            const mapel = document.getElementById("cfgMapel")?.value || currentExamData.mapel || "Informatika";
+            const kelas = document.getElementById("cfgKelas")?.value || currentExamData.kelas || "VII (Tujuh)";
             const yayasan = document.getElementById("cfgYayasan")?.value || "YAYASAN INTISYARUL ULUM";
             const sekolah = document.getElementById("cfgSekolah")?.value || "MADRASAH IBTIDAIYAH INTISYARUL ULUM";
             const alamat1 = document.getElementById("cfgAlamat1")?.value || "MONTONG ARE KECAMATAN KEDIRI KAB. LOMBOK BARAT";
             const alamat2 = document.getElementById("cfgAlamat2")?.value || "Alamat : Jl. TGH. Mustafa Al-Khalidy Jurusan Gebong II Montong Are 83362";
             const judul = document.getElementById("cfgJudulUjian")?.value || "SOAL ASESMEN SUMATIF AKHIR SEMESTER";
             const tahun = document.getElementById("cfgTahunPelajaran")?.value || "TAHUN PELAJARAN 2025/2026";
-            const akreditasi = document.getElementById("cfgAkreditasi")?.value || "Terakreditasi B";
             const hariTgl = document.getElementById("cfgHariTgl")?.value || "Senin, 18 Mei 2026";
-            const waktu = document.getElementById("cfgWaktu")?.value || "90 Menit";
+            const waktu = document.getElementById("cfgWaktu")?.value || "90";
 
             const getKopHtml = () => `
                 <div class="relative flex items-center justify-between pb-1.5 kop-border min-h-[85px] font-serif">
@@ -1351,19 +1350,17 @@ Kembalikan format JSON persis sesuai schema berikut tanpa markdown lain:
                     </div>
                 
                     <div class="flex-1 text-center px-2">
-                        <h4 class="font-bold text-xs text-[11pt] uppercase tracking-wide leading-tight" contenteditable="true">${yayasan}</h4>
-                        <h2 style="font-family: Arial, sans-serif;" class="font-bold text-sm text-[11pt] md:text-base uppercase tracking-wide leading-tight text-slate-900" contenteditable="true">${sekolah}</h2>
-                        <p class="text-[10pt] italic font-normal leading-tight" contenteditable="true">${alamat1}</p>
-                        <p class="text-[9pt] font-normal leading-tight" contenteditable="true">${alamat2}</p>
+                        <h4 class="font-bold text-xs text-[13pt] uppercase tracking-wide leading-tight" contenteditable="true">${yayasan}</h4>
+                        <h2 style="font-family: Arial, sans-serif;" class="font-bold text-sm text-[15pt] md:text-base uppercase tracking-wide leading-tight text-slate-900" contenteditable="true">${sekolah}</h2>
+                        <p class="text-[13pt]  font-normal leading-tight" contenteditable="true">${alamat1}</p>
+                        <p class="text-[12pt] font-normal leading-tight" contenteditable="true">${alamat2}</p>
                     </div>
                 </div>
-
-                <div class="text-center font-bold text-xs uppercase mb-1.5">
+                <div class="text-center font-family: Arial, text-[12pt] font-bold text-xs uppercase mb-1.5">
                     <div contenteditable="true">${judul}</div>
                     <div contenteditable="true">${tahun}</div>
                 </div>
-
-                <table class="w-full text-[9.5pt] font-serif table-identitas border border-black mb-2.5">
+                <table class="w-full text-[10pt] font-serif table-identitas border border-black mb-2.5">
                     <tr>
                         <td class="w-28 font-bold border-r border-b border-black bg-slate-50">Mata Pelajaran</td>
                         <td class="border-r border-b border-black" contenteditable="true">: ${mapel}</td>
@@ -1371,10 +1368,10 @@ Kembalikan format JSON persis sesuai schema berikut tanpa markdown lain:
                         <td class="border-b border-black" contenteditable="true">:            </td>
                     </tr>
                     <tr>
-                        <td class="font-bold border-r border-black bg-slate-50">Kelas / Semester</td>
+                        <td class="font-bold border-r border-black bg-slate-50">Kelas</td>
                         <td class="border-r border-black" contenteditable="true">: ${kelas}</td>
                         <td class="font-bold border-r border-black bg-slate-50">Hari / Tanggal</td>
-                        <td contenteditable="true">: ${hariTgl} (${waktu})</td>
+                        <td contenteditable="true">: ${hariTgl} </td>
                     </tr>
                 </table>
             `;
@@ -1386,21 +1383,20 @@ Kembalikan format JSON persis sesuai schema berikut tanpa markdown lain:
             let questionsContainer = document.createElement("div");
             questionsContainer.className = "space-y-1.5";
 
+            // 1. Pilihan Ganda
             if (currentExamData.pg && currentExamData.pg.length > 0) {
                 const headerA = document.createElement("div");
-                headerA.className = "section-header font-bold text-[9pt] mt-2 mb-1.5 pb-0.5";
+                headerA.className = "section-header text-[18] font-bold text-sm mt-2 mb-1.5 pb-0.5";
                 headerA.innerText = "I. BERILAH TANDA SILANG (X) PADA HURUF A, B, C, ATAU D PADA JAWABAN YANG PALING BENAR!";
                 questionsContainer.appendChild(headerA);
 
                 currentExamData.pg.forEach((item, idx) => {
                     const qDiv = document.createElement("div");
-                    qDiv.className = "q-block text-[10pt]";
-
+                    qDiv.className = "q-block dynamic-question-text";
                     const optLabels = ['a', 'b', 'c', 'd'];
-
                     const optionsHtml = item.options.map((opt, oIdx) => `
                         <div class="opt-item flex items-start gap-1">
-                            <span class="font-bold">${optLabels[oIdx]}.</span>
+                            <span class="font-normal">${optLabels[oIdx]}.</span>
                             <span contenteditable="true">${opt}</span>
                         </div>
                     `).join("");
@@ -1410,25 +1406,50 @@ Kembalikan format JSON persis sesuai schema berikut tanpa markdown lain:
                             <span class="font-bold min-w-[20px]">${idx + 1}.</span>
                             <div class="flex-1" contenteditable="true">${item.question}</div>
                         </div>
-
                         <div class="options-grid grid grid-cols-2 gap-x-8 gap-y-1 mt-1">
                             ${optionsHtml}
                         </div>
                     `;
-
                     questionsContainer.appendChild(qDiv);
                 });
             }
 
-            if (currentExamData.uraian && currentExamData.uraian.length > 0) {
+            // 2. Isian Singkat
+            if (currentExamData.isian && currentExamData.isian.length > 0) {
                 const headerB = document.createElement("div");
-                headerB.className = "section-header font-bold text-[10pt] uppercase mt-3 mb-1.5 pb-0.5";
-                headerB.innerText = "II. JAWABLAH PERTANYAAN-PERTANYAAN DI BAWAH INI DENGAN JELAS DAN BENAR!";
+                headerB.className = "section-header text-[18] font-bold text-sm mt-2 mb-1.5 pb-0.5";
+                headerB.innerText = "II. ISILAH TITIK-TITIK DI BAWAH INI DENGAN JAWABAN YANG SINGKAT DAN TEPAT!";
                 questionsContainer.appendChild(headerB);
+
+                currentExamData.isian.forEach((item, idx) => {
+                    const qDiv = document.createElement("div");
+                    qDiv.className = "q-block dynamic-question-text mb-2";
+
+                    let qText = item.question;
+                    if (!qText.includes("___") && !qText.includes("....")) {
+                        qText += " __________.";
+                    }
+
+                    qDiv.innerHTML = `
+                        <div class="flex items-start gap-1.5 font-medium">
+                            <span class="font-bold min-w-[20px]">${idx + 1}.</span>
+                            <div class="flex-1" contenteditable="true">${qText}</div>
+                        </div>
+                    `;
+                    questionsContainer.appendChild(qDiv);
+                });
+            }
+
+            // 3. Uraian / Essai
+            if (currentExamData.uraian && currentExamData.uraian.length > 0) {
+                const headerC = document.createElement("div");
+                headerC.className = "section-header text-[18] font-bold text-sm mt-2 mb-1.5 pb-0.5";
+                headerC.innerText = currentExamData.pg.length > 0 ? "II. JAWABLAH PERTANYAAN-PERTANYAAN DI BAWAH INI DENGAN JELAS DAN BENAR!" : "III. JAWABLAH PERTANYAAN-PERTANYAAN DI BAWAH INI DENGAN JELAS DAN BENAR!";
+                questionsContainer.appendChild(headerC);
 
                 currentExamData.uraian.forEach((item, idx) => {
                     const qDiv = document.createElement("div");
-                    qDiv.className = "q-block text-[10pt]";
+                    qDiv.className = "q-block dynamic-question-text";
                     qDiv.innerHTML = `
                         <div class="flex items-start gap-1.5 font-medium">
                             <span class="font-bold min-w-[20px]">${idx + 1}.</span>
@@ -1448,7 +1469,6 @@ Kembalikan format JSON persis sesuai schema berikut tanpa markdown lain:
         function renderKunciJawaban() {
             const container = document.getElementById("kunciContainer");
             if (!container) return;
-
             let html = "";
 
             if (currentExamData.pg && currentExamData.pg.length > 0) {
@@ -1457,7 +1477,6 @@ Kembalikan format JSON persis sesuai schema berikut tanpa markdown lain:
                         <h4 class="font-bold text-xs uppercase mb-2 border-b border-black pb-1">I. KUNCI JAWABAN PILIHAN GANDA (${currentExamData.pg.length} SOAL)</h4>
                         <div class="grid grid-cols-5 sm:grid-cols-10 gap-1.5 text-center text-xs font-mono">
                 `;
-
                 const optLabels = ['A', 'B', 'C', 'D'];
                 currentExamData.pg.forEach((item, idx) => {
                     const ans = optLabels[item.correctIndex || 0];
@@ -1468,34 +1487,40 @@ Kembalikan format JSON persis sesuai schema berikut tanpa markdown lain:
                         </div>
                     `;
                 });
+                html += `</div></div>`;
+            }
 
+            if (currentExamData.isian && currentExamData.isian.length > 0) {
                 html += `
-                        </div>
-                    </div>
+                    <div class="mt-4">
+                        <h4 class="font-bold text-xs uppercase mb-2 border-b border-black pb-1">II. KUNCI JAWABAN ISIAN SINGKAT</h4>
+                        <div class="space-y-2 text-xs">
                 `;
+                currentExamData.isian.forEach((item, idx) => {
+                    html += `
+                        <div class="p-2 border border-slate-300 rounded bg-slate-50">
+                            <strong>${idx + 1}.</strong> ${item.answerKey || 'Halal'}
+                        </div>
+                    `;
+                });
+                html += `</div></div>`;
             }
 
             if (currentExamData.uraian && currentExamData.uraian.length > 0) {
                 html += `
                     <div class="mt-4">
-                        <h4 class="font-bold text-xs uppercase mb-2 border-b border-black pb-1">II. KUNCI JAWABAN & PEDOMAN PENSKORAN URAIAN</h4>
+                        <h4 class="font-bold text-xs uppercase mb-2 border-b border-black pb-1">PEDOMAN JAWABAN URAIAN (${currentExamData.uraian.length} SOAL)</h4>
                         <div class="space-y-3 text-xs">
                 `;
-
                 currentExamData.uraian.forEach((item, idx) => {
                     html += `
-                        <div class="p-2.5 border border-slate-300 rounded bg-slate-50/50">
-                            <div class="font-bold text-slate-900">${idx + 1}. ${item.question}</div>
-                            <div class="text-emerald-800 mt-1"><strong>Kunci Jawaban:</strong> ${item.answerKey}</div>
-                            <div class="text-slate-600 text-[10px] italic mt-0.5"><strong>Pedoman Skor:</strong> ${item.explanation || "Skor maksimal 20"}</div>
+                        <div class="p-2.5 border border-slate-300 rounded bg-slate-50 space-y-1">
+                            <div><strong>${idx + 1}. Soal:</strong> ${item.question}</div>
+                            <div><strong>Jawaban/Rubrik:</strong> <span class="text-blue-800 font-medium">${item.answerKey || 'Sesuai kebijakan guru'}</span></div>
                         </div>
                     `;
                 });
-
-                html += `
-                        </div>
-                    </div>
-                `;
+                html += `</div></div>`;
             }
 
             container.innerHTML = html;
